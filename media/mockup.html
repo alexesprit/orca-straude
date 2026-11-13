@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Straude for Orca — cover mockup</title>
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; background: #101113; }
+.preview { width: min(100%, 1600px); margin: auto; }
+.frame{container-type:inline-size;width:100%}
+.art{aspect-ratio:8/5;position:relative;overflow:hidden;background:#101113;color:#dedfe2;padding:4.5cqw 5cqw;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.art p,.art h1,.art h2{margin:0}
+.art .eyebrow{color:#858991;font-size:1cqw;letter-spacing:.2cqw;font-weight:600}
+.art h1{font-size:5cqw;line-height:1.08;letter-spacing:-.22cqw;font-weight:650;margin:1.75cqw 0 1.1cqw}
+.art h1 .dot{color:#7a7f84}
+.art .subtitle{font-size:1.58cqw;color:#90949c}
+.art .window{background:#191b1e;border:1px solid #313338;border-radius:.8cqw;overflow:hidden}
+.art .chrome{height:3.4cqw;display:flex;align-items:center;gap:.45cqw;padding:0 1.4cqw;border-bottom:1px solid #2b2d31;background:#1e2023}
+.art .chrome i{display:block;width:.5cqw;height:.5cqw;border-radius:50%;background:#45484e}
+.art .chrome .window-title{flex:1;text-align:center;color:#858991;font-size:.85cqw;letter-spacing:.12cqw;padding-right:2cqw}
+.art .chrome small{font-size:.9cqw;color:#858991}
+.art .card{border:1px solid #2c2e32;border-radius:.8cqw;padding:1.5cqw;background:#1b1d20}
+.art .row{display:flex;align-items:baseline;justify-content:space-between;gap:1cqw}
+.art .card-title{font-size:1.1cqw;font-weight:550}
+.art .dim{color:#8f949d}
+.art .date{font-size:.9cqw;color:#8f949d}
+.art .price{font-size:3cqw;line-height:1.2;font-weight:550;letter-spacing:-.1cqw;font-variant-numeric:tabular-nums}
+.art .badge{display:flex;align-items:center;gap:.4cqw;font-size:.8cqw;padding:.15cqw .6cqw;border:1px solid #34373b;border-radius:2cqw;color:#c5c9ce}
+.art .badge:before{content:'';width:.4cqw;height:.4cqw;background:#34d399;border-radius:50%}
+.art .gauge{height:.6cqw;display:flex;gap:1px;border-radius:.4cqw;overflow:hidden;margin:1.25cqw 0}
+.art .gauge i{display:block;min-width:2px}
+.art .pink{background:#fb7185}
+.art .green{background:#34d399}
+.art .purple{background:#c084fc}
+.art .model{display:grid;grid-template-columns:minmax(0,1fr) 3.4cqw 4.4cqw;align-items:center;gap:.6cqw;font-size:.98cqw;margin-top:.7cqw}
+.art .model .identity{display:flex;align-items:center;gap:.55cqw}
+.art .palette i{width:.7cqw;height:.7cqw;border-radius:50%}
+.art .model .identity i{width:.5cqw;height:.5cqw;flex:none;border-radius:50%}
+.art .model .percent{font-size:.85cqw;color:#90949c;text-align:right}
+.art .model .cost{text-align:right;font-variant-numeric:tabular-nums}
+.art .kv{display:flex;justify-content:space-between;gap:1cqw;font-size:1.05cqw;margin-top:.7cqw}
+.art .rule{height:1px;background:#303338;margin:1.2cqw 0}
+.art .status{height:3.6cqw;display:flex;justify-content:space-between;align-items:center;padding:0 1.5cqw;border-top:1px solid #313338;background:#202225;font-size:1cqw;color:#858991}
+.art .status strong{color:#eceef1;font-weight:500;display:flex;align-items:center;gap:.65cqw}
+.art .status svg{width:1.25cqw;height:1.25cqw;stroke:#aeb3bc}
+.art .code{padding:2cqw 2cqw 1.4cqw;font:1.05cqw/2.1 ui-monospace,SFMono-Regular,monospace;color:#7a7f89}
+.art .code .blue{color:#7897ad}
+.art .code .sand{color:#b1a17a}
+.art .code .gray{color:#53575f}
+.art .gutter{display:inline-block;width:2cqw;color:#45494f;user-select:none}
+.art .code-line{white-space:nowrap}
+.art .skeleton{height:.45cqw;border-radius:.2cqw;background:#2b2e32;margin-top:1.2cqw;width:75%}
+.art .skeleton:nth-child(even){width:50%}
+.art .footer{display:flex;justify-content:space-between;align-items:center;position:absolute;bottom:3.5cqw;left:5cqw;right:5cqw;color:#858991;font-size:1cqw;border-top:1px solid #292c30;padding-top:1.4cqw}
+.art .palette{display:flex;gap:.55cqw}
+.art .label{font-size:1.15cqw;font-weight:550;margin-bottom:1cqw}
+.art .label span{float:right;color:#666b73;font:1cqw ui-monospace,monospace}
+.art .app-body{display:flex;height:29cqw}
+.art .filetree{width:18%;padding:1.5cqw 1.2cqw;border-right:1px solid #2b2d31;font-size:.9cqw;color:#858991;line-height:2.3}
+.art .filetree strong{font-size:.8cqw;font-weight:500;letter-spacing:.1cqw}
+.art .filetree .selected{background:#292d33;color:#c6cbd2;margin:0 -1.2cqw;padding:0 1.2cqw}
+.art .editor{flex:1;min-width:0}
+.art .tabline{border-bottom:1px solid #2b2d31;padding:.7cqw 1.4cqw;font-size:.9cqw;color:#9ca1ab}
+.art .sidebar-panel{width:43%;border-left:1px solid #2b2d31;padding:1.3cqw;background:#151719}
+.art .panel-heading{font-size:1.1cqw;margin-bottom:1cqw;font-weight:550}
+.art .sidebar-panel .card{padding:1.1cqw}
+.art .sidebar-panel .card+.card{margin-top:.8cqw}
+.art .sidebar-panel .price{font-size:2.1cqw;margin-top:.9cqw}
+.art .sidebar-panel .model{font-size:.86cqw;grid-template-columns:minmax(0,1fr) 2.7cqw 3.8cqw}
+.art .sidebar-panel .percent{font-size:.75cqw}
+.art .sidebar-panel .card-title{font-size:.9cqw}
+.art .sidebar-panel .date{font-size:.75cqw}
+.art.a .hero-window{margin-top:3.2cqw}
+.art.a .app-body{height:28cqw}
+</style>
+</head>
+<body>
+<main class="preview"><div class="frame">
+<article class="art a" id="cover-art" aria-label="Straude for Orca plugin cover">
+<p class="eyebrow">ORCA / STRAUDE INTEGRATION</p>
+<h1>Straude for Orca<span class="dot">.</span>
+</h1>
+<p class="subtitle">Your coding spend, without leaving Orca.</p>
+<div class="window hero-window">
+<div class="chrome">
+<i>
+</i>
+<i>
+</i>
+<i>
+</i>
+<span class="window-title">ORCA</span>
+</div>
+<div class="app-body">
+<div class="filetree">
+<strong>EXPLORER</strong>
+<div style="margin-top:.8cqw">⌄ project</div>
+<div> &nbsp; index.ts</div>
+<div class="selected"> &nbsp; App.tsx</div>
+<div> &nbsp; styles.css</div>
+<div> &nbsp; README.md</div>
+</div>
+<div class="editor">
+<div class="tabline">App.tsx</div>
+<div class="code">
+<div class="code-line">
+<span class="gutter">1</span>
+<span class="blue">export default</span> <span class="sand">function</span> App() {</div>
+<div class="code-line">
+<span class="gutter">2</span>  <span class="blue">return</span> (</div>
+<div class="code-line">
+<span class="gutter">3</span>    &lt;<span class="sand">Workspace</span> /&gt;</div>
+<div class="code-line">
+<span class="gutter">4</span>  )</div>
+<div class="code-line">
+<span class="gutter">5</span>}</div>
+<div class="code-line gray">
+<span class="gutter">6</span>
+</div>
+<div class="code-line gray">
+<span class="gutter">7</span>// Keep building.</div>
+</div>
+</div>
+<div class="sidebar-panel">
+<div class="panel-heading">Straude</div>
+<div class="card">
+<div class="row">
+<span class="card-title">Today’s spend</span>
+<span class="date">Nov 14, 2026</span>
+</div>
+<div class="row" style="margin-top:1cqw">
+<span class="price">$20.84</span>
+<span class="badge">Verified</span>
+</div>
+</div>
+<div class="card">
+<div class="row">
+<span class="card-title">Models <span class="dim">3</span>
+</span>
+<span class="date">$20.84</span>
+</div>
+<div class="gauge">
+<i class="pink" style="width:89.6%">
+</i>
+<i class="green" style="width:10.2%">
+</i>
+<i class="purple" style="width:.2%">
+</i>
+</div>
+<div class="model">
+<span class="identity">
+<i class="pink">
+</i>gpt-6-astra</span>
+<span class="percent">89.6%</span>
+<span class="cost">$18.68</span>
+</div>
+<div class="model">
+<span class="identity">
+<i class="green">
+</i>gpt-6.1-sol</span>
+<span class="percent">10.2%</span>
+<span class="cost">$2.12</span>
+</div>
+<div class="model">
+<span class="identity">
+<i class="purple">
+</i>gpt-5.6-luna</span>
+<span class="percent">0.2%</span>
+<span class="cost">$0.04</span>
+</div>
+</div>
+</div>
+</div>
+<div class="status">
+<span>main</span>
+<strong>
+<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+<path d="M3 3v14h14M7 13V9m4 4V5m4 8v-6">
+</path>
+</svg>Straude $20.84</strong>
+</div>
+</div>
+<div class="footer">
+<span>Daily spend · Tokens · Model breakdown</span>
+<div class="palette">
+<i style="background:#60A5FA">
+</i>
+<i style="background:#FBBF24">
+</i>
+<i style="background:#C084FC">
+</i>
+<i style="background:#34D399">
+</i>
+<i style="background:#FB7185">
+</i>
+<i style="background:#22D3EE">
+</i>
+</div>
+</div>
+</article>
+</div></main>
+</body>
+</html>

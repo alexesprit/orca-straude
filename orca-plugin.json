@@ -1,0 +1,73 @@
+{
+  "manifestVersion": 2,
+  "id": "straude",
+  "name": "Straude for Orca",
+  "version": "0.1.0",
+  "license": "MIT",
+  "homepage": "https://straude.com",
+  "repository": "https://github.com/alexesprit/orca-straude",
+  "cover": {
+    "path": "media/cover.png",
+    "alt": "Straude for Orca showing daily spend in the status bar and a colored model-spend breakdown in the sidebar of a dark editor window."
+  },
+  "screenshots": [
+    {
+      "path": "media/screenshot.png",
+      "alt": "Orca with a terminal open and the Straude sidebar showing daily spend, token usage, model costs, profile statistics and rankings.",
+      "caption": "Straude daily usage in Orca’s sidebar and status bar.",
+      "theme": "dark"
+    }
+  ],
+  "description": "Straude daily spend, token usage, profile and rankings in Orca.",
+  "engines": {
+    "orca": ">=1.4.248"
+  },
+  "execution": "trusted-worker",
+  "main": "src/worker.ts",
+  "capabilities": [
+    {
+      "kind": "settings:own"
+    },
+    {
+      "kind": "storage:own"
+    }
+  ],
+  "contributes": {
+    "settings": [
+      {
+        "key": "username",
+        "title": "Straude username",
+        "type": "string",
+        "default": "",
+        "maxLength": 80,
+        "description": "The username from your Straude profile URL, with or without @."
+      },
+      {
+        "key": "refreshIntervalMinutes",
+        "title": "Refresh interval",
+        "type": "integer",
+        "default": 5,
+        "enum": [5, 15, 30, 60],
+        "enumLabels": ["5 minutes", "15 minutes", "30 minutes", "60 minutes"],
+        "description": "How often to fetch Straude data. Changes apply immediately; Refresh always fetches now."
+      }
+    ],
+    "statusBarItems": [
+      {
+        "id": "spend",
+        "text": "Straude: set username",
+        "icon": "bar-chart-3",
+        "tooltip": "Set your Straude username in plugin settings."
+      }
+    ],
+    "panels": [
+      {
+        "id": "straude",
+        "title": "Straude",
+        "icon": "bar-chart-3",
+        "entry": "src/panel.html",
+        "ui": "html"
+      }
+    ]
+  }
+}
