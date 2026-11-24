@@ -12,6 +12,7 @@
     "validate": "orca plugin validate . --json",
     "check": "orca plugin check . --json",
     "install:local": "node scripts/install-local.mjs",
+    "version": "node scripts/sync-plugin-version.mjs && biome format --write orca-plugin.json && git add -- orca-plugin.json",
     "ci": "npm run lint && npm test && npm run check",
     "postinstall": "lefthook install"
   },
