@@ -2,6 +2,7 @@ import type { OrcaWorkerApi } from 'orca/worker'
 import {
   CACHE_TTL,
   currentSnapshot,
+  historyFrom,
   money,
   profileFrom,
   type Snapshot,
@@ -152,6 +153,15 @@ export default async function activate(orca: OrcaWorkerApi) {
     timer = setInterval(() => background(true), intervalMs)
   }
   orca.panels.handle('usage.get', (input) => refresh(input?.force === true))
+  orca.panels.handle('usage.history', async ({ profileId, cursor }) => {
+    const query = new URLSearchParams({
+      type: 'user',
+      user_id: profileId,
+      limit: '5',
+    })
+    if (cursor) query.set('cursor', cursor)
+    return historyFrom(await getJson(`https://straude.com/api/feed?${query}`))
+  })
   orca.panels.handle('usage.configure', async (input) => {
     if (typeof input?.username !== 'string' || input.username.length > 80)
       throw new Error('Invalid Straude username.')

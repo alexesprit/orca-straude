@@ -109,3 +109,44 @@ test('formats the usage calendar day in the UI locale without timezone shifts', 
     ),
   )
 })
+
+test('shows selected post stats and history controls with current profile and rankings', () => {
+  const selected = {
+    ...emptyUsage('2020-01-01'),
+    id: 'older',
+    cost: 42,
+    sessions: 8,
+  }
+  const history = {
+    open: true,
+    selected,
+    posts: [selected],
+    cursor: 'next',
+    loading: false,
+    error: '',
+  }
+  const view = () => renderPanel(state, false, '', {}, 'en-US', history)
+  const html = view()
+  for (const label of [
+    'Daily spend',
+    '$42.00',
+    'Jan 1, 2020',
+    '<dd>8</dd>',
+    'Load more',
+    'Back to today',
+    'ES / Europe',
+    'Rankings',
+    'aria-pressed="true"',
+  ])
+    assert.ok(html.includes(label))
+  assert.ok(!html.includes('Today’s spend'))
+  history.open = false
+  assert.ok(view().includes('Recent posts · Jan 1, 2020'))
+  history.open = true
+  assert.ok(
+    !renderPanel(state, false, '', {}, 'en-US', {
+      ...history,
+      cursor: null,
+    }).includes('Load more'),
+  )
+})

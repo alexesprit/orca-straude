@@ -1,4 +1,11 @@
-import { integer, money, rank, type State, tokens } from './data'
+import {
+  type HistoryPost,
+  integer,
+  money,
+  rank,
+  type State,
+  tokens,
+} from './data'
 import { type Model, modelBreakdown } from './models'
 
 const escapeHtml = (value: unknown): string =>
@@ -17,7 +24,50 @@ const kv = (items: [string, string][]) =>
     )
     .join('')}</dl>`
 
-function modelsView(models: Model[], colors: Record<string, string>): string {
+export type HistoryView = {
+  open: boolean
+  posts: HistoryPost[]
+  selected: HistoryPost | null
+  cursor: string | null
+  loading: boolean
+  error: string
+}
+
+function formatDate(date: string, locale?: string) {
+  return new Date(`${date}T00:00:00Z`).toLocaleDateString(locale, {
+    dateStyle: 'medium',
+    timeZone: 'UTC',
+  })
+}
+
+function historyView(
+  history: HistoryView,
+  currentDate: string,
+  locale?: string,
+) {
+  const { selected, open } = history
+  const rows = open
+    ? history.posts
+        .map((post, index) => {
+          const current = selected
+            ? post.id === selected.id
+            : post.date === currentDate
+          return `<button id="history-post-${index}" class="history-post" data-post="${index}" aria-pressed="${current}"><span>${escapeHtml(formatDate(post.date, locale))}${post.date === currentDate ? ' · Today' : ''}</span><span>${money(post.cost)}</span></button>`
+        })
+        .join('')
+    : ''
+  return `<section class="card history"><button id="history-toggle" aria-expanded="${open}" aria-controls="history-list"><span aria-hidden="true">${open ? '▾' : '▸'}</span> Recent posts${selected && !open ? ` · ${escapeHtml(formatDate(selected.date, locale))}` : ''}</button><div id="history-list" ${open ? '' : 'hidden'}>
+    ${rows}
+    ${history.error ? `<p role="status" class="hint">${escapeHtml(history.error)}</p>` : ''}
+    ${history.loading ? '<button id="history-more" aria-live="polite" disabled>Loading posts…</button>' : history.error || history.cursor ? `<button id="history-more">${history.error ? 'Retry' : 'Load more'}</button>` : !rows && open ? '<p class="hint">No published posts.</p>' : ''}
+  </div></section>`
+}
+
+function modelsView(
+  models: Model[],
+  colors: Record<string, string>,
+  historical: boolean,
+): string {
   const known = models.filter((model) => model.cost !== null)
   const total = known.reduce((sum, model) => sum + (model.cost ?? 0), 0)
   const complete = known.length === models.length
@@ -52,7 +102,7 @@ function modelsView(models: Model[], colors: Record<string, string>): string {
             .join('')}</div>`
         : ''
     }
-    ${models.length ? `<ul class="model-list">${models.map((model) => `<li><span class="model-name"><i aria-hidden="true" style="background:${color(model)}"></i><span>${escapeHtml(model.name)}</span></span><span class="share">${escapeHtml(share(model))}</span><span class="model-cost">${model.cost === null ? '—' : money(model.cost)}</span></li>`).join('')}</ul>` : '<p class="muted">No model usage today.</p>'}
+    ${models.length ? `<ul class="model-list">${models.map((model) => `<li><span class="model-name"><i aria-hidden="true" style="background:${color(model)}"></i><span>${escapeHtml(model.name)}</span></span><span class="share">${escapeHtml(share(model))}</span><span class="model-cost">${model.cost === null ? '—' : money(model.cost)}</span></li>`).join('')}</ul>` : `<p class="muted">${historical ? 'No model usage for this post.' : 'No model usage today.'}</p>`}
     ${!complete ? '<p class="hint">Cost breakdown unavailable for some models. Percentages cover reported costs.</p>' : ''}
   </div>`
 }
@@ -63,31 +113,26 @@ export function renderPanel(
   error: string,
   colors: Record<string, string>,
   locale?: string,
+  history?: HistoryView,
 ): string {
   const snapshot = state?.snapshot
-  const u = snapshot?.usage
+  const u = history?.selected ?? snapshot?.usage
   const p = snapshot?.profile
   const message = error || state?.error
-  // A usage date is a calendar day, not an instant in the viewer's timezone.
-  const date = u
-    ? new Date(`${u.date}T00:00:00Z`).toLocaleDateString(locale, {
-        dateStyle: 'medium',
-        timeZone: 'UTC',
-      })
-    : ''
+  const date = u ? formatDate(u.date, locale) : ''
   return `<header><h1>Straude</h1><button id="refresh" type="button" aria-live="polite" ${busy || !state?.username ? 'disabled' : ''}>${busy ? 'Refreshing…' : 'Refresh'}</button></header>
     ${message ? `<aside class="warning" role="status"><strong>${state?.stale ? 'Showing cached data' : 'Refresh failed'}</strong><p>${escapeHtml(message)}</p></aside>` : ''}
     ${!state?.username && !busy ? '<section class="card"><h2>Connect your Straude profile</h2><p class="muted">Set your Straude username in Settings → Plugins → Straude for Orca to see usage, your profile and rankings.</p></section>' : ''}
     ${
-      u && p
-        ? `<section class="card"><div class="spend-heading"><h2>Today’s spend</h2><p class="muted date">${escapeHtml(date)}</p></div><div class="spend"><strong>${money(u.cost)}</strong><span class="badge ${u.verified ? 'verified' : ''}">${u.verified ? 'Verified' : 'No verified usage'}</span></div></section>
+      u && p && snapshot
+        ? `${history ? historyView(history, snapshot.usage.date, locale) : ''}<section class="card"><div class="spend-heading"><h2>${history?.selected ? 'Daily spend' : 'Today’s spend'}</h2><p class="muted date">${escapeHtml(date)}</p></div><div class="spend"><strong>${money(u.cost)}</strong><span class="badge ${u.verified ? 'verified' : ''}">${u.verified ? 'Verified' : 'No verified usage'}</span></div>${history?.selected ? '<button id="history-today">Back to today</button>' : ''}</section>
     <section class="card"><h2>Tokens</h2>${kv([
       ['Input', tokens(u.input)],
       ['Output', tokens(u.output)],
       ['Cache read', tokens(u.cacheRead)],
       ['Total', tokens(u.total)],
       ['Sessions', integer(u.sessions)],
-    ])}${modelsView(modelBreakdown(u), colors)}</section>
+    ])}${modelsView(modelBreakdown(u), colors, !!history?.selected)}</section>
     <section class="card"><h2>${escapeHtml(p.name || `@${p.username}`)}</h2>${p.name ? `<p class="muted">@${escapeHtml(p.username)}</p>` : ''}${kv(
       [
         [

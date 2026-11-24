@@ -30,6 +30,9 @@ Set **Straude username** under
 Settings → Plugins → Straude for Orca. A leading `@` is optional.
 Choose **Refresh interval** there: 5 (default), 15, 30 or 60 minutes.
 Changes apply immediately to the polling schedule and cache lifetime.
+Expand **Recent posts** to browse five published posts at a time. Select a date
+to see its spend, tokens, sessions and model costs. **Load more** appends older
+posts, and **Back to today** returns to current usage. The status bar shows today’s spend.
 The panel's **Open Straude** link opens Straude in your default browser.
 
 ```sh

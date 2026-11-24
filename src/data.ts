@@ -105,14 +105,18 @@ export function usageFrom(payload: unknown, date = today()): Usage {
   if (!Array.isArray(feed.posts))
     throw new Error('Unexpected Straude usage response.')
   if (!feed.posts.length) return emptyUsage(date)
-  const p = record(feed.posts[0])
+  const usage = postUsage(feed.posts[0])
+  return usage.date === date ? usage : emptyUsage(date)
+}
+
+function postUsage(post: unknown): Usage {
+  const p = record(post)
   const u = record(p.daily_usage)
   if (typeof u.date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(u.date)) {
     throw new Error('Missing Straude usage date.')
   }
-  if (u.date !== date) return emptyUsage(date)
   return {
-    date,
+    date: u.date,
     cost: number(u.cost_usd),
     input: number(u.input_tokens),
     output: number(u.output_tokens),
@@ -139,6 +143,23 @@ export function usageFrom(payload: unknown, date = today()): Usage {
       : [],
     verified: u.is_verified === true,
     updatedAt: text(u.updated_at) || text(p.updated_at),
+  }
+}
+
+export type HistoryPost = Usage & { id: string }
+export type HistoryPage = { posts: HistoryPost[]; cursor: string | null }
+
+export function historyFrom(payload: unknown): HistoryPage {
+  const feed = record(payload)
+  if (!Array.isArray(feed.posts))
+    throw new Error('Unexpected Straude history response.')
+  return {
+    posts: feed.posts.map((post) => {
+      const id = text(record(post).id)
+      if (!id) throw new Error('Missing Straude post ID.')
+      return { ...postUsage(post), id }
+    }),
+    cursor: text(feed.next_cursor) || null,
   }
 }
 

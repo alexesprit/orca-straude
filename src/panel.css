@@ -240,6 +240,28 @@ dd {
 .fetched {
   font-size: 11px;
 }
+.history {
+  padding: 6px 8px;
+}
+#history-toggle,
+.history-post {
+  width: 100%;
+  text-align: left;
+}
+.history-post {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  font-variant-numeric: tabular-nums;
+}
+.history-post[aria-pressed="true"] {
+  background: rgb(128 128 128 / 22%);
+  font-weight: 600;
+}
+.history .hint {
+  padding: 5px 8px;
+}
 html.light body {
   background: var(--orca-background, #fafafa);
   color: var(--orca-foreground, #202020);

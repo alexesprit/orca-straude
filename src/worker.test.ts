@@ -295,3 +295,47 @@ test('a pending old-username request returns the current user after settings cha
     await worker.deactivate()
   }
 })
+
+test('loads five history posts on demand and follows the opaque cursor without publishing historical spend', async () => {
+  const cursor = '2020-01-02|12:00:00+00:00'
+  const pages: URL[] = []
+  globalThis.fetch = async (input) => {
+    const url = new URL(String(input))
+    if (url.pathname.includes('/users/')) return json(profile)
+    if (url.searchParams.get('limit') === '1') return json(feed())
+    pages.push(url)
+    const date = url.searchParams.has('cursor') ? '2020-01-01' : '2020-01-02'
+    return json({
+      posts: [
+        { id: date, daily_usage: { date, cost_usd: 45, session_count: 3 } },
+      ],
+      next_cursor: pages.length === 1 ? cursor : null,
+    })
+  }
+  const worker = await mountWorker(main, {
+    host: mockHost({ settings: { username: 'alexesprit' } }),
+  })
+  try {
+    await worker.request('usage.get')
+    const published = worker.posts.length
+    const first = await worker.request('usage.history', {
+      profileId: 'id',
+      cursor: null,
+    })
+    const second = await worker.request('usage.history', {
+      profileId: 'id',
+      cursor: first.cursor,
+    })
+    assert.equal(pages.length, 2)
+    assert.equal(pages[0].searchParams.get('limit'), '5')
+    assert.equal(pages[0].searchParams.get('user_id'), 'id')
+    assert.equal(pages[1].searchParams.get('cursor'), cursor)
+    assert.equal(first.posts[0].cost, 45)
+    assert.equal(second.posts[0].date, '2020-01-01')
+    assert.equal(second.posts[0].sessions, 3)
+    assert.equal(second.cursor, null)
+    assert.equal(worker.posts.length, published)
+  } finally {
+    await worker.deactivate()
+  }
+})
