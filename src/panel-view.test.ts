@@ -81,8 +81,11 @@ test('handles zero spend, missing breakdowns, offline and loading states', () =>
       {},
     ).includes('Showing cached data'),
   )
-  assert.ok(renderPanel(null, false, '', {}).includes('Settings → Plugins'))
-  assert.ok(renderPanel(null, false, '', {}).includes('Open Straude'))
+  const empty = renderPanel(null, false, '', {})
+  assert.ok(empty.includes('Settings → Plugins'))
+  assert.ok(empty.includes('href="https://straude.com/signup"'))
+  assert.ok(empty.includes('>Create an account</a>'))
+  assert.ok(empty.includes('Open Straude'))
 })
 
 test('formats the usage calendar day in the UI locale without timezone shifts', () => {

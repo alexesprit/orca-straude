@@ -122,7 +122,7 @@ export function renderPanel(
   const date = u ? formatDate(u.date, locale) : ''
   return `<header><h1>Straude</h1><button id="refresh" type="button" aria-live="polite" ${busy || !state?.username ? 'disabled' : ''}>${busy ? 'Refreshing…' : 'Refresh'}</button></header>
     ${message ? `<aside class="warning" role="status"><strong>${state?.stale ? 'Showing cached data' : 'Refresh failed'}</strong><p>${escapeHtml(message)}</p></aside>` : ''}
-    ${!state?.username && !busy ? '<section class="card"><h2>Connect your Straude profile</h2><p class="muted">Set your Straude username in Settings → Plugins → Straude for Orca to see usage, your profile and rankings.</p></section>' : ''}
+    ${!state?.username && !busy ? '<section class="card"><h2>Connect your Straude profile</h2><p class="muted">Set your Straude username in Settings → Plugins → Straude for Orca to see usage, your profile and rankings.</p><p class="signup muted">New to Straude? <a id="straude-signup" href="https://straude.com/signup" target="_blank" rel="noopener noreferrer">Create an account</a>.</p></section>' : ''}
     ${
       u && p && snapshot
         ? `${history ? historyView(history, snapshot.usage.date, locale) : ''}<section class="card"><div class="spend-heading"><h2>${history?.selected ? 'Daily spend' : 'Today’s spend'}</h2><p class="muted date">${escapeHtml(date)}</p></div><div class="spend"><strong>${money(u.cost)}</strong><span class="badge ${u.verified ? 'verified' : ''}">${u.verified ? 'Verified' : 'No verified usage'}</span></div>${history?.selected ? '<button id="history-today">Back to today</button>' : ''}</section>

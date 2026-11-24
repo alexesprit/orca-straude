@@ -55,6 +55,12 @@ button:focus-visible {
   outline: 2px solid var(--orca-focus-ring, #60a5fa);
   outline-offset: 2px;
 }
+.signup {
+  margin-top: 8px;
+}
+.signup a {
+  color: inherit;
+}
 .external-link {
   display: inline-flex;
   align-items: center;

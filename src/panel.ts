@@ -141,10 +141,13 @@ root.addEventListener('click', (event) => {
     render()
   }
   if ((event.target as Element).closest('#refresh') && !busy) void load(true)
-  if ((event.target as Element).closest('#open-straude')) {
+  const link = (event.target as Element).closest<HTMLAnchorElement>(
+    'a#open-straude, a#straude-signup',
+  )
+  if (link) {
     event.preventDefault()
     void orca.host
-      .call('shell.openExternal', { url: 'https://straude.com' })
+      .call('shell.openExternal', { url: link.href })
       .catch((reason) => {
         error =
           reason instanceof Error ? reason.message : 'Could not open Straude.'
